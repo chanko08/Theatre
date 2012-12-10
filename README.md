@@ -1,1 +1,2 @@
-* Theatre: An entity-component framework for python *
+Theatre: An entity-component framework for python
+=================================================
