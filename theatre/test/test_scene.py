@@ -6,7 +6,7 @@ class System(object):
     def test(self,i):
         self.result = i
 
-class EntityTest(object):
+class TestEntity(object):
     pass
 
 class ComponentTest(object):
@@ -43,7 +43,7 @@ class SceneTest(unittest.TestCase):
         self.assertEquals(len(s._entities), 1)
 
 
-        s.add_entity(EntityTest())
+        s.add_entity(TestEntity())
         self.assertEquals(len(s._entities), 2)
 
         e = s.entity(components = [ComponentTest])
