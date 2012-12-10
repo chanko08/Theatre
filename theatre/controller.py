@@ -124,6 +124,10 @@ class KeyControl(Controller):
 
 
     def _binder(self, list_type, keydict):
+        """
+            Binds all members of this object that have the attribute
+            'list_type' into the corresponding 'keydict'.
+        """
         for name in self.__class__.__dict__:
             member = getattr(self, name)
             if not hasattr(member, list_type):
@@ -135,6 +139,11 @@ class KeyControl(Controller):
                 keydict[key].append( (mod, member) )
 
     def _on_key_press(self, symbol, modifiers):
+        """
+            The method that gets called on key press which
+            then propagates that event accordingly to all
+            necessary functions.
+        """
         if symbol in self.key_press_bindings:
             for mod, func in self.key_press_bindings[symbol]:
                 if mod is None or modifiers & mod:
@@ -143,6 +152,11 @@ class KeyControl(Controller):
         self.on_key_press(symbol, modifiers)
 
     def _on_key_release(self, symbol, modifiers):
+        """
+            The method that gets called on key release which
+            then propagates that event accordingly to all
+            necessary functions.
+        """
         if symbol in self.key_release_bindings:
             for mod, func in self.key_release_bindings[symbol]:
                 if mod is None or modifiers & mod:

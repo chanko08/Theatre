@@ -156,4 +156,7 @@ class EntityIterator(object):
         raise StopIteration
     
     def _class_names(self, classes):
+        """
+            A helper method for getting all component names
+        """
         return [c.__name__ for c in classes]

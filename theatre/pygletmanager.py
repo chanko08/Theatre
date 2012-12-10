@@ -2,6 +2,11 @@ import pyglet
 from manager import Manager
 
 class PygletManager(Manager):
+    """
+        This is the Manager that is used for development with Pyglet.
+        This Manager provides event handlers for all the keyboard and
+        mouse events that Pyglet provides.
+    """
     def __init__(self, window, scene, fps=60):
         super(PygletManager, self).__init__(scene)
         self.window = window
@@ -11,6 +16,10 @@ class PygletManager(Manager):
 
 
 class PygletManagerEventHandler(object):
+    """
+        The Event Handler for PygletManager.
+        This hooks all the pyglet event methods into the PygletManager.
+    """
     def __init__(self, manager, window, fps):
         self.manager = manager
         self.window = window
