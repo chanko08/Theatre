@@ -1,37 +1,49 @@
+from entity import Entity
+
 class Scene(object):
     def __init__(self, manager):
         """
             Initialize the scene so that systems can tie their events to the
             scene.
+
         """
+        super(Scene, self).__init__()
         self.manager = manager
         self._event_callback = {}
         self._entities = []
+        self._systems = []
+
 
     
 
     def entity(self, components=None, groups=None):
         """
             Creates an entity based on the list of component classes passed in
-            and the group identifiers passed in.
+            and the group identifiers passed in, and registers it with this
+            scene.
 
             Returns an initialized Entity object
         """
-        raise NotImplementedError()
+        e = Entity(self, components, groups)
+        return self.add_entity(e)
+        
 
-
-    def system(self, system):
+    def add_entity(self, entity):
         """
-            Takes a class or object as an input.
-            If the input is a class then the object is initialized and placed in
-            the systems dictionary with its given name
+            Registers the given entity object with the scene
+        """
+        self._entities.append(entity)
+        return entity
 
-            If the input is an object, the object is placed in the systems dictionary
+
+    def add_system(self, system):
+        """
+            The object is placed in the systems dictionary
             with its given name
 
-            Either way, the object is then inspected to see what events it is bound to.
+            The object is then inspected to see what events it is bound to.
         """
-        raise NotImplementedError()
+        self._systems.append(system)
 
 
     def get(self, *components):
@@ -40,7 +52,9 @@ class Scene(object):
             are given it passes these to the iterator for processing
             of the list of entities.
         """
-        raise NotImplementedError()
+        it = EntityIterator(self._entities)
+        it.contains(*components)
+        return it
 
 
     def bind(self, event, callback):
@@ -75,45 +89,71 @@ class EntityIterator(object):
     """
 
     def __init__(self, entities):
-        raise NotImplementedError()
+        self.entities = iter(entities)
+
+        self.andables    = set()
+        self.someables   = set()
+        self.excludables = set()
+        self.groups      = set()
 
     def contains(self, *andables):
         """
             Ensure that all entities that are returned from the iterator
             have these components.
         """
-        raise NotImplementedError()
+        self.andables.update(self._class_names(andables))
+        return self
 
     def has_one_of(self, *someables):
         """
             Ensure that all entities that are returned from the iterator
             have at least one of these components
         """
-        raise NotImplementedError()
+        self.someables.update(self._class_names(someables))
+        return self
 
     def excludes(self, *excludables):
         """
             Ensure that all entities that are returned from the iterator
             do not have any of these components
         """
-        raise NotImplementedError()        
+        self.excludables.update(self._class_names(excludables))
+        return self
 
     def is_member_of(self, *groups):
         """
             Ensure that all entities that are returned from the iterator
-            are a member of the given group identifiers.
+            are a member of any of the given group identifiers.
         """
-        raise NotImplementedError()
+        self.groups.update(self._class_names(groups))
 
     def __iter__(self):
         """
             Returns itself as an iterator
         """
-        raise NotImplementedError()
+        return self
 
     def next(self):
         """
             Goes through all entities and returns only the ones that
             match the parameters specified by the user.
         """
-        raise NotImplementedError()
+        for e in self.entities:
+            components = e._components.keys()
+            if self.andables and not self.andables.issubset(components):
+                continue
+
+            if self.someables and not self.someables.intersection(components):
+                continue
+
+            if self.excludables and self.excludables.intersection(components):
+                continue
+
+            if self.groups and not self.groups.intersection(components):
+                continue
+
+            return e
+        raise StopIteration
+    
+    def _class_names(self, classes):
+        return [c.__name__ for c in classes]

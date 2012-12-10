@@ -11,7 +11,12 @@ class Entity(object):
             Creates an entity, attaches the given components to the entity,
             gives the entity the given group qualifiers.
         """
-        return NotImplementedError()
+        self.scene = scene
+        self._components = {}
+        self._groups = []
+
+        self.add_components(components)
+        self.add_groups(groups)
 
     def add_components(self, components  = None):
         """
@@ -22,10 +27,27 @@ class Entity(object):
 
             Components are attached according to their class names
         """
-        return NotImplementedError()
+        if components is None:
+            return
+
+        for c in components:
+            if isinstance(c, type):
+                self._components[c.__name__.lower()] = c()
+            else:
+                self._components[c.__class__.__name__.lower()] = c
 
     def add_groups(self, groups = None):
         """
             Adds the list of groups to the entity.
         """
-        return NotImplementedError()
+        if groups is None:
+            return
+        self._groups.extend(groups)
+
+    def __getitem__(self, key):
+        return self._components[key]
+
+    def __getattr__(self, name):
+        if name in self._components:
+            return self._components[name]
+        raise AttributeError("Couldn't find component with name:{0}".format(name))
