@@ -144,12 +144,13 @@ class KeyControl(Controller):
             then propagates that event accordingly to all
             necessary functions.
         """
+        self.on_key_press(symbol, modifiers)
         if symbol in self.key_press_bindings:
             for mod, func in self.key_press_bindings[symbol]:
                 if mod is None or modifiers & mod:
                     func()
 
-        self.on_key_press(symbol, modifiers)
+        
 
     def _on_key_release(self, symbol, modifiers):
         """
@@ -157,11 +158,12 @@ class KeyControl(Controller):
             then propagates that event accordingly to all
             necessary functions.
         """
+        self.on_key_release(symbol, modifiers)
         if symbol in self.key_release_bindings:
             for mod, func in self.key_release_bindings[symbol]:
                 if mod is None or modifiers & mod:
                     func()
 
-        self.on_key_release(symbol, modifiers)
+        
 
     

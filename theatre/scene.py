@@ -42,6 +42,9 @@ class Scene(object):
             with its given name
 
             The object is then inspected to see what events it is bound to.
+
+            Note: You do not need to add the system to the scene in order to bind
+            systems to events in the scene.
         """
         self._system_dict[system.__class__.__name__] = system
 
