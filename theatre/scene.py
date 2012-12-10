@@ -132,7 +132,8 @@ class EntityIterator(object):
             Ensure that all entities that are returned from the iterator
             are a member of any of the given group identifiers.
         """
-        self.groups.update(self._class_names(groups))
+        self.groups.update(groups)
+        return self
 
     def __iter__(self):
         """
@@ -147,6 +148,7 @@ class EntityIterator(object):
         """
         for e in self.entities:
             components = e._components.keys()
+            groups = e._groups
             if self.andables and not self.andables.issubset(components):
                 continue
 
@@ -156,7 +158,7 @@ class EntityIterator(object):
             if self.excludables and self.excludables.intersection(components):
                 continue
 
-            if self.groups and not self.groups.intersection(components):
+            if self.groups and not self.groups.intersection(groups):
                 continue
 
             return e
@@ -166,4 +168,4 @@ class EntityIterator(object):
         """
             A helper method for getting all component names
         """
-        return [c.__name__ for c in classes]
+        return [c.__name__.lower() for c in classes]
