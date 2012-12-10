@@ -11,7 +11,7 @@ class Scene(object):
         self.manager = manager
         self._event_callback = {}
         self._entities = []
-        self._systems = []
+        self._system_dict = {}
 
 
     
@@ -43,7 +43,14 @@ class Scene(object):
 
             The object is then inspected to see what events it is bound to.
         """
-        self._systems.append(system)
+        self._system_dict[system.__class__.__name__] = system
+
+    def get_system(self, system_name):
+        """
+            Access a system registered with the scene by its class
+            name.
+        """
+        return self._system_dict[system_name]
 
 
     def get(self, *components):
