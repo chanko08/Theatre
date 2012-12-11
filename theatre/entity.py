@@ -14,6 +14,7 @@ class Entity(object):
         self.scene = scene
         self._components = {}
         self._groups = []
+        self._dead = False
 
         self.add_components(components)
         self.add_groups(groups)
@@ -51,3 +52,9 @@ class Entity(object):
         if name in self._components:
             return self._components[name]
         raise AttributeError("Couldn't find component with name:{0}".format(name))
+
+    def member_of(self, group):
+        return group in self._groups
+
+    def delete(self):
+        self._dead = True

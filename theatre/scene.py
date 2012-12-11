@@ -13,6 +13,16 @@ class Scene(object):
         self._entities = []
         self._system_dict = {}
 
+        self.bind("update", self._clean_entities)
+
+
+    def _clean_entities(self, dt):
+        entity_list = []
+        for e in self._entities:
+            if not e._dead:
+                entity_list.append(e)
+        self._entities = entity_list
+
 
     
 
@@ -105,6 +115,7 @@ class EntityIterator(object):
         self.someables   = set()
         self.excludables = set()
         self.groups      = set()
+        self.excludable_groups = set()
 
     def contains(self, *andables):
         """
@@ -138,6 +149,16 @@ class EntityIterator(object):
         self.groups.update(groups)
         return self
 
+    def exclude_members_of(self, *groups):
+        self.excludable_groups.update(groups)
+        return self
+
+    def first(self):
+        """
+            Returns the first match for this iterator.
+        """
+        return next(self)
+
     def __iter__(self):
         """
             Returns itself as an iterator
@@ -162,6 +183,9 @@ class EntityIterator(object):
                 continue
 
             if self.groups and not self.groups.intersection(groups):
+                continue
+
+            if self.excludable_groups and self.excludable_groups.intersection(groups):
                 continue
 
             return e
